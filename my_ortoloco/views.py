@@ -41,7 +41,7 @@ def get_menu_dict(request):
 
         for bohne in allebohnen:
             if date.today().month < 4:
-                if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 3) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)) and bohne.job.time < datetime.datetime.now():
+                if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 0) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)) and bohne.job.time < datetime.datetime.now():
                     userbohnen.append(bohne)
             else:
                 if (bohne.job.time.year == date.today().year and bohne.job.time.month > 3) and bohne.job.time < datetime.datetime.now():
@@ -929,7 +929,7 @@ def current_year_boehlis():
 
     for bohne in allebohnen:
         if date.today().month < 4:
-            if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 3) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)):
+            if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 0) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)):
                 yearbohnen.append(bohne)
         else:
             if (bohne.job.time.year == date.today().year and bohne.job.time.month > 3):
