@@ -198,7 +198,7 @@ class Abo(models.Model):
 
     @staticmethod
     def next_size_change_date():
-        return datetime.date(day=1, month=7, year=datetime.date.today().year + 1)
+        return datetime.date(day=1, month=1, year=datetime.date.today().year + 1)
 
     @staticmethod
     def get_size_name(size=0):
