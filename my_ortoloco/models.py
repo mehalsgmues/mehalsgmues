@@ -296,8 +296,8 @@ class Loco(models.Model):
 
 
     class Meta:
-        verbose_name = "Loco"
-        verbose_name_plural = "Locos"
+        verbose_name = "Mitglied"
+        verbose_name_plural = "Mitglieder"
 
     def get_name(self):
         return u"%s %s" % (self.first_name, self.last_name)
