@@ -155,7 +155,7 @@ class Abo(models.Model):
     extra_abos_changed = models.BooleanField(default=False)
     future_extra_abos = models.ManyToManyField(ExtraAboType, null=True, blank=True, related_name="future_extra_abos")
     primary_loco = models.ForeignKey("Loco", related_name="abo_primary", null=True, blank=True,
-                                     on_delete=models.PROTECT)
+                                     on_delete=models.PROTECT, verbose_name="Hauptmitglied")
     active = models.BooleanField(default=False)
 
     def __unicode__(self):
@@ -177,6 +177,7 @@ class Abo(models.Model):
     def primary_loco_nullsave(self):
         loco = self.primary_loco
         return unicode(loco) if loco is not None else ""
+    primary_loco_nullsave.short_description = "Hauptmitglied"
 
     def small_abos(self):
         return self.size % 2
@@ -309,7 +310,7 @@ class Loco(models.Model):
 
 
 class Anteilschein(models.Model):
-    loco = models.ForeignKey(Loco, null=True, blank=True, on_delete=models.SET_NULL)
+    loco = models.ForeignKey(Loco, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mitglied")
     paid = models.BooleanField(default=False)
     canceled = models.BooleanField(default=False)
 
@@ -450,7 +451,7 @@ class RecuringJob(Job):
         verbose_name = 'Job'
         verbose_name_plural = 'Jobs'
 
-class OneTimeJob(Job, AbstractJobType):
+class OneTimeJob(AbstractJobType, Job):
     """
     One time job. Do not add Field here do it in the Parent class
     """
@@ -469,7 +470,7 @@ class Boehnli(models.Model):
     Single boehnli (work unit).
     """
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    loco = models.ForeignKey(Loco, on_delete=models.PROTECT)
+    loco = models.ForeignKey(Loco, on_delete=models.PROTECT, verbose_name="Mitglied")
 
     def __unicode__(self):
         return u'Boehnli #%s' % self.id
