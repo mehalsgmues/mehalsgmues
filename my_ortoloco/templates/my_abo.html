@@ -3,7 +3,7 @@
 {% block content %}
     <h3>Abo Übersicht</h3>
 	{% if scheine_unpaid > 0 %}
-	            <div class="alert alert-warning">Das Beziehen eines Abos ist erst möglich wenn du einen Anteilschein erworben hast.<br/>Hast du Probleme beim Erwerb eines Anteilscheins? Melde dich hier: <a href="/my/kontakt">Kontakt</a></div>
+	            <div class="alert alert-warning">Das Beziehen eines Abos ist erst möglich, nachdem Du einen Anteilschein erworben hast.<br/>Du hast Probleme beim Erwerb eines Anteilscheins? Dann melde Dich hier: <a href="/my/kontakt">Kontakt</a></div>
     {% else %}
         {% if not loco.abo %}
             <div class="alert alert-warning">Du hast noch kein Abo<br/>Du möchtest eines? Melde dich hier an: <a href="/my/aboerstellen">Abo erstellen</a></div>

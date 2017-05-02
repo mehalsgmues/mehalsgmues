@@ -1080,7 +1080,7 @@ def my_depotlisten(request):
 def logout_view(request):
     auth.logout(request)
     # Redirect to a success page.
-    return HttpResponseRedirect("/aktuelles")
+    return HttpResponseRedirect("/")
 
 
 def alldepots_list(request, name):

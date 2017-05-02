@@ -44,7 +44,7 @@
                         <a href="/my/kontakt">Kontakt</a>
                     </li>
                     <li class="{{ menu.ortoloco }}">
-                        <a href="/aktuelles">mehalsgmues.ch</a>
+                        <a href="http://mehalsgmues.ch">mehalsgmues.ch</a>
                     </li>
                     {% if depot_admin|length > 0 or area_admin|length > 0 %}
                         <li>
@@ -53,13 +53,13 @@
                     {% endif %}
                     {% for depot in depot_admin %}
                         <li class="inline">
-                            <a href="/my/filters/depot/{{ depot.id }}">Locos</a> | <a
+                            <a href="/my/filters/depot/{{ depot.id }}">Mitglieder</a> | <a
                                 href="/my/abos/depot/{{ depot.id }}">Abos</a> im Depot {{ depot.name }}
                         </li>
                     {% endfor %}
                     {% for area in area_admin %}
                         <li>
-                            <a href="/my/filters/area/{{ area.id }}">Locos in {{ area.name }}</a>
+                            <a href="/my/filters/area/{{ area.id }}">Mitglieder in {{ area.name }}</a>
                         </li>
                     {% endfor %}
                     {% if depot_admin|length > 0 or area_admin|length > 0 %}
@@ -80,7 +80,7 @@
                         </li>
 -->
                         <li class="inline">
-                            Filtern <a href="/my/filters">Locos</a> | <a href="/my/abos">Abos</a>
+                            Filtern <a href="/my/filters">Mitglieder</a> | <a href="/my/abos">Abos</a>
                         </li>
                         <li>
                             <a href="/my/zukunft">Zukunftsblick</a>

@@ -17,11 +17,11 @@ define([], function () {
         } else if (count == 1) {
             $("button#send-email")
                 .prop('disabled', false)
-                .text("Email an diesen Loco senden");
+                .text("Email an dieses Mitglied senden");
         } else {
             $("button#send-email")
                 .prop('disabled', false)
-                .text("Email an diese " + dable.VisibleRowCount() + " Locos senden");
+                .text("Email an diese " + dable.VisibleRowCount() + " Mitglieder senden");
         }
     }
 
