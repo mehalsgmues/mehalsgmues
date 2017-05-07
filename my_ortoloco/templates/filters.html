@@ -7,13 +7,14 @@
             width: 95%;
         }
     </style>
-        <form id="email-sender" action="/my/mails{% if enhanced %}/{{ enhanced }}{% endif %}" method="POST">
+    <form id="email-sender" action="/my/mails{% if enhanced %}/{{ enhanced }}{% endif %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="recipient_type" id="recipient_type" value="Locos"/>
         <input type="hidden" name="recipients" id="recipients"/>
         <input type="hidden" name="recipients_count" id="recipients_count"/>
         <input type="hidden" name="filter_value" id="filter_value"/>
         <button type="submit" class="btn btn-success" id="send-email">Email senden</button>
+        <div class="btn btn-success" id="copy-email">Email-Adressen kopieren</div>
     </form>
     <div id="filter-table">
         <table class="list" style="display: table;">

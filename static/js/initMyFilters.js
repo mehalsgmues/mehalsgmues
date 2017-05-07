@@ -43,5 +43,16 @@ define([], function () {
         $("#filter_value").val($("#filter-table_search").val());
         return;
     });
+    
+    $("form#email-sender div#copy-email").click(function() {
+        var emails = [];
+        $("#filter-table").find("tr").each(function () {
+            var txt = $("td:eq(5)", this).text().trim();
+            if (txt.length > 0)
+                emails.push(txt);
+        });
+        window.prompt("Kopiere mich:", emails.join(", "));
+        return;
+    });
 
 });
