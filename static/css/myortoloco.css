@@ -130,6 +130,27 @@
 
 #filter-table {
     width: 1000px;
+    font-size: 10px;
+}
+
+#filter-table tr.odd {
+    background-color: #fffff7;
+}
+
+#filter-table tr.even {
+    background-color: #ecf4e1;
+}
+
+#filter-table th.sorting_asc::after {
+   content: ' ^'
+}
+
+#filter-table th.sorting_desc::after {
+   content: ' v'
+}
+
+#filter-table_filter {
+    text-align: right;
 }
 
 #filter-table table {

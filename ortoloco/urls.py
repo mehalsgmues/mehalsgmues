@@ -87,5 +87,9 @@ urlpatterns = patterns('',
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.STATIC_ROOT,
     }),
+    
+    # API
+    url(r'^api/membertable/$', 'my_ortoloco.views.api_membertable'),
+    url(r'^api/emaillist/$', 'my_ortoloco.views.api_emaillist')
 
 )

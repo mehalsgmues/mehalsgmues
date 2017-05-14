@@ -97,6 +97,41 @@ def make_username(firstname, lastname, email):
     email = hashlib.sha1(email).hexdigest()
     return ("%s_%s_%s" % (firstname, lastname, email))[:30]
 
+@staff_member_required
+def get_emails_by_filter(request, global_filter, column_filter=None):
+    from models import Loco
+    from django.db.models import Q
+    """
+    Get filtered list of member email adresses
+    @param global_filters: text search to be appled to all attributes of a member OR object like this
+    @param column_filters
+        column_filter : [
+            # List of dicts
+            {
+                name: # name of attribute to be filtered
+                value: # text search to be applied to attribute
+            }
+        ]
+    @returns a list of emails of all members filtered by filter_value
+    """
+    # Globale Suche anwenden
+    locos = Loco.objects.filter(
+        Q(first_name__icontains=global_filter) |
+        Q(last_name__icontains=global_filter) |
+        Q(areas__name__icontains=global_filter) |
+        Q(abo__depot__name__icontains=global_filter) |
+        Q(email__icontains=global_filter) |
+        Q(phone__icontains=global_filter) |
+        Q(mobile_phone__icontains=global_filter)
+    )
+    
+    #Spaltensuche anwenden
+    for c_filter in column_filter:
+        if c_filter['value'] != '':
+            locos = locos.filter(**{c_filter['name']+'__icontains': c_filter['value']})
+    
+    # email liste:
+    return locos.values_list('email', flat=True)
 
 @staff_member_required
 def run_in_shell(request, command_string, input=None):

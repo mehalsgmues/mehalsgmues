@@ -29,6 +29,8 @@ from static_ortoloco.models import Politoloco
 
 from decorators import primary_loco_of_abo
 
+import json
+from django.db.models import Q
 
 def password_generator(size=8, chars=string.ascii_uppercase + string.digits): return ''.join(random.choice(chars) for x in range(size))
 
@@ -907,13 +909,26 @@ def my_mails_area(request):
     return my_mails_intern(request, "area")
 
 def my_mails_intern(request, enhanced, error_message=None):
+    recipients = request.POST.get("recipients")
+    if not recipients:
+        # get recipients by filter
+        try:
+            recipients = get_emails_by_filter( request, **json.loads(request.POST.get("filter_value")) )
+        except ValueError:
+            recipients = get_emails_by_filter( request, request.POST.get("filter_value") )
+        
+        recipients_count = len(recipients)
+        recipients = '\n'.join(recipients)
+    else:
+        recipients_count = int(request.POST.get("recipients_count"))
+
+
     renderdict = get_menu_dict(request)
     renderdict.update({
         'recipient_type': request.POST.get("recipient_type"),
         'recipient_type_detail': request.POST.get("recipient_type_detail"),
-        'recipients': request.POST.get("recipients"),
-        'recipients_count': int(request.POST.get("recipients_count") or 0),
-        'filter_value': request.POST.get("filter_value"),
+        'recipients': recipients,
+        'recipients_count': recipients_count,
         'mail_subject': request.POST.get("subject"),
         'mail_message': request.POST.get("message"),
         'enhanced': enhanced,
@@ -1383,3 +1398,62 @@ def test_filters_post(request):
     data = Filter.format_data(locos, lambda loco: "%s! (email: %s)" % (loco, loco.email))
     res.extend(data)
     return HttpResponse("<br>".join(res))
+    
+# API
+@staff_member_required
+def api_membertable(request):
+    request = json.loads(request.body)
+    start = int(request['start']) # Daten ab diesem Offset laden
+    end = start + int(request['length']) # Daten bis zu diesem Eintrag laden
+    orderby = ''
+    if request['order'][0]['dir'] == 'desc':
+        orderby = '-'
+    orderby += request['columns'][int(request['order'][0]['column'])]['name'] # Daten sortieren nach
+    
+    # Daten laden
+    # Suche anwenden
+    searchtext = request['search']['value']
+    locos = Loco.objects.filter(
+        Q(first_name__icontains=searchtext) |
+        Q(last_name__icontains=searchtext) |
+        Q(areas__name__icontains=searchtext) |
+        Q(abo__depot__name__icontains=searchtext) |
+        Q(email__icontains=searchtext) |
+        Q(phone__icontains=searchtext) |
+        Q(mobile_phone__icontains=searchtext)
+    )
+    
+    # Spaltensuche anwenden
+    for column in request['columns']:
+        if column['searchable'] and column['search']['value'] != '':
+            locos = locos.filter(**{column['name']+'__icontains': column['search']['value']})
+    
+    # counter
+    recordsFiltered = locos.count()
+    
+    # sort & slice
+    locos = locos.order_by(orderby)[start:end]
+    
+    boehnlis = current_year_boehnlis_per_loco()
+    boehnlis_kernbereich = current_year_kernbereich_boehnlis_per_loco()
+    
+    data = []
+    for loco in locos:
+        loco.boehnlis = boehnlis[loco]
+        loco.boehnlis_kernbereich = boehnlis_kernbereich[loco]
+        data.append([ loco.first_name +' '+loco.last_name, loco.boehnlis, loco.boehnlis_kernbereich, ','.join(area.name for area in loco.areas.all()) if loco.areas.count() > 0 else '-Kein Tätigkeitsbereich-', loco.abo.depot.name if loco.abo else '-', loco.email, loco.phone, loco.mobile_phone ])
+    
+    return HttpResponse(json.dumps({
+        "draw": int(request['draw']),
+        "recordsTotal": Loco.objects.count(),
+        "recordsFiltered": recordsFiltered,
+        "data" : data
+    }))
+    
+@staff_member_required
+def api_emaillist(request):
+    """prints comma separated list of member emails"""
+    # get emails by filter
+    emails = get_emails_by_filter( request, **json.loads(request.POST.get("filter_value")) )
+
+    return HttpResponse(', '.join(emails))
