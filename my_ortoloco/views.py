@@ -971,17 +971,7 @@ def current_year_kernbereich_boehnlis_per_loco():
 
 @staff_member_required
 def my_filters(request):
-    locos = Loco.objects.all()
-    boehnlis = current_year_boehnlis_per_loco()
-    boehnlis_kernbereich = current_year_kernbereich_boehnlis_per_loco()
-    for loco in locos:
-        loco.boehnlis = boehnlis[loco]
-        loco.boehnlis_kernbereich = boehnlis_kernbereich[loco]
-
     renderdict = get_menu_dict(request)
-    renderdict.update({
-        'locos': locos
-    })
     return render(request, 'filters.html', renderdict)
 
 
