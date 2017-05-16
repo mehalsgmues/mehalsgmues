@@ -30,7 +30,7 @@ from static_ortoloco.models import Politoloco
 from decorators import primary_loco_of_abo
 
 import json
-from django.db.models import Q
+from django.db.models import Q, Count
 
 def password_generator(size=8, chars=string.ascii_uppercase + string.digits): return ''.join(random.choice(chars) for x in range(size))
 
@@ -937,28 +937,32 @@ def my_mails_intern(request, enhanced, error_message=None):
     })
     return render(request, 'mail_sender.html', renderdict)
 
-def current_year_boehlis():
+def current_year_boehlis(locos=None):
     now = datetime.date.today()
-    allebohnen = Boehnli.objects.filter(job__time__lt=now)
-    yearbohnen = []
-
-    for bohne in allebohnen:
-        if date.today().month < 4:
-            if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 0) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)):
-                yearbohnen.append(bohne)
-        else:
-            if (bohne.job.time.year == date.today().year and bohne.job.time.month > 3):
-                yearbohnen.append(bohne)
-
-    return yearbohnen
+    this_year = now.year
+    if date.today().month < 4:
+        this_year -= 1
+    allebohnen = Boehnli.objects.filter(job__time__gte=datetime.date(this_year, 4, 1),
+                                        job__time__lte=datetime.date(this_year+1, 3, 31))
+    if locos:
+        allebohnen = allebohnen.filter(loco__in=locos)
+    return allebohnen
 
 
-def current_year_boehnlis_per_loco():
-    boehnlis = current_year_boehlis()
+def current_year_boehnlis_per_loco(locos=None, get_kernbereich=False):
+    boehnlis = current_year_boehlis(locos)
     boehnlis_per_loco = defaultdict(int)
-    for boehnli in boehnlis:
-        boehnlis_per_loco[boehnli.loco] += 1
-    return boehnlis_per_loco
+    boehnlis_per_loco_kernbereich = defaultdict(int)
+    if get_kernbereich:
+        for boehnli in boehnlis:
+            boehnlis_per_loco[boehnli.loco.pk] += 1
+            if boehnli.is_in_kernbereich():
+                boehnlis_per_loco_kernbereich[boehnli.loco.pk] += 1
+        return boehnlis_per_loco, boehnlis_per_loco_kernbereich
+    else:
+        for boehnli in boehnlis.values('loco').annotate(Count('loco')).order_by():
+            boehnlis_per_loco[boehnli['loco']] = boehnli['loco__count']
+        return boehnlis_per_loco
 
 def current_year_kernbereich_boehnlis_per_loco():
     boehnlis = current_year_boehlis()
@@ -1401,17 +1405,19 @@ def api_membertable(request):
     orderby += request['columns'][int(request['order'][0]['column'])]['name'] # Daten sortieren nach
     
     # Daten laden
+    locos = Loco.objects.distinct()
     # Suche anwenden
     searchtext = request['search']['value']
-    locos = Loco.objects.filter(
-        Q(first_name__icontains=searchtext) |
-        Q(last_name__icontains=searchtext) |
-        Q(areas__name__icontains=searchtext) |
-        Q(abo__depot__name__icontains=searchtext) |
-        Q(email__icontains=searchtext) |
-        Q(phone__icontains=searchtext) |
-        Q(mobile_phone__icontains=searchtext)
-    )
+    if searchtext != '':
+        locos = locos.filter(
+            Q(first_name__icontains=searchtext) |
+            Q(last_name__icontains=searchtext) |
+            Q(areas__name__icontains=searchtext) |
+            Q(abo__depot__name__icontains=searchtext) |
+            Q(email__icontains=searchtext) |
+            Q(phone__icontains=searchtext) |
+            Q(mobile_phone__icontains=searchtext)
+        )
     
     # Spaltensuche anwenden
     for column in request['columns']:
@@ -1420,19 +1426,19 @@ def api_membertable(request):
     
     # counter
     recordsFiltered = locos.count()
-    
+
     # sort & slice
     locos = locos.order_by(orderby)[start:end]
     
-    boehnlis = current_year_boehnlis_per_loco()
-    boehnlis_kernbereich = current_year_kernbereich_boehnlis_per_loco()
-    
+    loco_list = list(locos.values_list('pk', flat=True)) # eigenen query erzwingen, da sonst sortierung nicht angewendet wird
+    boehnlis, boehnlis_kernbereich = current_year_boehnlis_per_loco(loco_list, get_kernbereich=True)
     data = []
     for loco in locos:
-        loco.boehnlis = boehnlis[loco]
-        loco.boehnlis_kernbereich = boehnlis_kernbereich[loco]
-        data.append([ loco.first_name +' '+loco.last_name, loco.boehnlis, loco.boehnlis_kernbereich, ','.join(area.name for area in loco.areas.all()) if loco.areas.count() > 0 else '-Kein Tätigkeitsbereich-', loco.abo.depot.name if loco.abo else '-', loco.email, loco.phone, loco.mobile_phone ])
-    
+        areas = ', '.join(loco.areas.values_list('name', flat=True))
+        if not areas:
+            areas = '-Kein Tätigkeitsbereich-'
+        pk = int(loco.pk)
+        data.append([ loco.first_name +' '+loco.last_name, boehnlis[pk], boehnlis_kernbereich[pk], areas, loco.abo.depot.name if loco.abo else '-', loco.email, loco.phone, loco.mobile_phone ])
     return HttpResponse(json.dumps({
         "draw": int(request['draw']),
         "recordsTotal": Loco.objects.count(),

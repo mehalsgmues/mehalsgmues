@@ -115,15 +115,17 @@ def get_emails_by_filter(request, global_filter, column_filter=None):
     @returns a list of emails of all members filtered by filter_value
     """
     # Globale Suche anwenden
-    locos = Loco.objects.filter(
-        Q(first_name__icontains=global_filter) |
-        Q(last_name__icontains=global_filter) |
-        Q(areas__name__icontains=global_filter) |
-        Q(abo__depot__name__icontains=global_filter) |
-        Q(email__icontains=global_filter) |
-        Q(phone__icontains=global_filter) |
-        Q(mobile_phone__icontains=global_filter)
-    )
+    locos = Loco.objects
+    if global_filter != '':
+        locos = Loco.objects.filter(
+            Q(first_name__icontains=global_filter) |
+            Q(last_name__icontains=global_filter) |
+            Q(areas__name__icontains=global_filter) |
+            Q(abo__depot__name__icontains=global_filter) |
+            Q(email__icontains=global_filter) |
+            Q(phone__icontains=global_filter) |
+            Q(mobile_phone__icontains=global_filter)
+        ).distinct()
     
     #Spaltensuche anwenden
     for c_filter in column_filter:
@@ -131,7 +133,7 @@ def get_emails_by_filter(request, global_filter, column_filter=None):
             locos = locos.filter(**{c_filter['name']+'__icontains': c_filter['value']})
     
     # email liste:
-    return locos.values_list('email', flat=True)
+    return locos.values_list('email', flat=True).distinct()
 
 @staff_member_required
 def run_in_shell(request, command_string, input=None):

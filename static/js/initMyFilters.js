@@ -113,8 +113,6 @@ define([], function () {
 
     var column_search = $.fn.dataTable.util.throttle(
         function ( column, val ) {
-            console.log(column.search())
-            console.log(val)
             if (column.search() !== val) {
                 column.search( val ).draw();
             }
