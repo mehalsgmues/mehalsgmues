@@ -916,6 +916,8 @@ def my_mails_intern(request, enhanced, error_message=None):
             recipients = get_emails_by_filter( request, **json.loads(request.POST.get("filter_value")) )
         except ValueError:
             recipients = get_emails_by_filter( request, request.POST.get("filter_value") )
+        except TypeError:
+            recipients = [];
         
         recipients_count = len(recipients)
         recipients = '\n'.join(recipients)
