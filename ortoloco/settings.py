@@ -20,8 +20,9 @@ whitelist_email_from_env("ORTOLOCO_EMAIL_WHITELISTED_2")
 ADMINS = (
     ('Manuel', 'mklarmann@gmail.com'),
     ('Andre', 'andy86@gmx.net'),
+    ('David', 'd.glenck@ihdg.ch')
 )
-SERVER_EMAIL="mehalsgmues@gmail.com"
+SERVER_EMAIL="info@mehalsgmues.ch"
 
 # let the users login with their emails
 AUTHENTICATION_BACKENDS = (
@@ -264,3 +265,5 @@ MEDIA_ROOT = 'media'
 MEDIA_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+LOGIN_REDIRECT_URL = '/'

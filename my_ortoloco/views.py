@@ -682,7 +682,6 @@ def my_createabo(request):
 
                 #user did it all => send confirmation mail
                 send_welcome_mail(loco.email, password, request.META["HTTP_HOST"])
-                send_welcome_mail("dorothea@ortoloco.ch", "<geheim>", request.META["HTTP_HOST"])
 
                 return redirect("/my/willkommen")
 
@@ -935,6 +934,7 @@ def my_mails_intern(request, enhanced, error_message=None):
         'mail_message': request.POST.get("message"),
         'enhanced': enhanced,
         'email': request.user.loco.email,
+        'server_email': settings.SERVER_EMAIL,
         'error_message': error_message
     })
     return render(request, 'mail_sender.html', renderdict)
