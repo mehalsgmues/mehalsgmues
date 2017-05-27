@@ -65,8 +65,8 @@ def send_mail_multi(email_multi_message):
     if len(okmails) > 0:
         # only SERVER_EMAIL is allowed as sender. Workaround:
         if email_multi_message.from_email != settings.SERVER_EMAIL:
-            email_multi_message.from_email = email_multi_message.from_email +' via my.mehalsgmues.ch <'+settings.SERVER_EMAIL+'>'
-        
+            email_multi_message.headers = {'Reply-To': email_multi_message.from_email},
+            email_multi_message.from_email = email_multi_message.from_email.replace('@',' at ') +' via my.mehalsgmues.ch <'+settings.SERVER_EMAIL+'>'
         email_multi_message.to = []
         email_multi_message.bcc = okmails
         email_multi_message.send()
