@@ -84,13 +84,6 @@ urlpatterns = patterns('',
         'document_root': settings.MEDIA_ROOT,
     }),
 	url(r'^downloads/(?P<param>.*)$', RedirectView.as_view(url='/medias/downloads/%(param)s')),
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
-        'document_root': settings.STATIC_ROOT,
-    }),
-    
-    url(r'^staticadmin/(?P<path>.*)$', 'django.views.static.serve', {
-        'document_root': settings.STATIC_ROOT,
-    }),
     
     # API
     url(r'^api/membertable/$', 'my_ortoloco.views.api_membertable'),
