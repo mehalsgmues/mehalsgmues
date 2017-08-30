@@ -989,7 +989,7 @@ def my_filters_depot(request, depot_id):
     boehnlis = current_year_boehnlis_per_loco()
     boehnlis_kernbereich = current_year_kernbereich_boehnlis_per_loco()
     for loco in locos:
-        loco.boehnlis = boehnlis[loco]
+        loco.boehnlis = boehnlis[loco.pk]
         loco.boehnlis_kernbereich = boehnlis_kernbereich[loco]
 
     renderdict = get_menu_dict(request)
@@ -1015,7 +1015,7 @@ def my_filters_area(request, area_id):
     boehnlis = current_year_boehnlis_per_loco()
     boehnlis_kernbereich = current_year_kernbereich_boehnlis_per_loco()
     for loco in locos:
-        loco.boehnlis = boehnlis[loco]
+        loco.boehnlis = boehnlis[loco.pk]
         loco.boehnlis_kernbereich = boehnlis_kernbereich[loco]
 
     renderdict = get_menu_dict(request)
@@ -1035,7 +1035,7 @@ def my_abos(request):
         boehnlis = 0
         boehnlis_kernbereich = 0
         for loco in abo.bezieher_locos():
-            boehnlis += boehnli_map[loco]
+            boehnlis += boehnli_map[loco.pk]
             boehnlis_kernbereich += boehnlis_kernbereich_map[loco]
 
         abos.append({
@@ -1064,7 +1064,7 @@ def my_abos_depot(request, depot_id):
         boehnlis = 0
         boehnlis_kernbereich = 0
         for loco in abo.bezieher_locos():
-            boehnlis += boehnli_map[loco]
+            boehnlis += boehnli_map[loco.pk]
             boehnlis_kernbereich += boehnlis_kernbereich_map[loco]
 
         abos.append({
@@ -1306,7 +1306,7 @@ def my_excel_export(request):
     boehnlis_kernbereich = current_year_kernbereich_boehnlis_per_loco()
     row = 1
     for loco in locos:
-        loco.boehnlis = boehnlis[loco]
+        loco.boehnlis = boehnlis[loco.pk]
         loco.boehnlis_kernbereich = boehnlis_kernbereich[loco]
         loco.bereiche = ""
         for bereich in loco.areas.all():
