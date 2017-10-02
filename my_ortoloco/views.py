@@ -112,6 +112,7 @@ def my_job(request, job_id):
         add = int(num)
         for i in range(add):
             Boehnli.objects.create(loco=loco, job=job)
+        send_mail( 'debugger', 'IP: '+request.META.get('REMOTE_ADDR')+', job: '+str(job.id)+', id: '+str(loco.id)+', num: '+num, 'it', [settings.ADMINS[2][1]], 'it' )
 
     participants_dict = defaultdict(int)
     boehnlis = Boehnli.objects.filter(job_id=job.id)
