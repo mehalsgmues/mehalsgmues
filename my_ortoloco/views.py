@@ -112,12 +112,6 @@ def my_job(request, job_id):
         add = int(num)
         for i in range(add):
             Boehnli.objects.create(loco=loco, job=job)
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        send_mail( 'debugger', 'IP: '+ip+', job: '+str(job.id)+', id: '+str(loco.id)+', num: '+num, 'it', [settings.ADMINS[2][1]], 'it' )
 
     participants_dict = defaultdict(int)
     boehnlis = Boehnli.objects.filter(job_id=job.id)
