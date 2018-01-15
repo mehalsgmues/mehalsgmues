@@ -43,7 +43,7 @@ def get_menu_dict(request):
 
         for bohne in allebohnen:
             if date.today().month < 4:
-                if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 0) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)) and bohne.job.time < datetime.datetime.now():
+                if ((bohne.job.time.year == date.today().year-1 and bohne.job.time.month > 3) or (bohne.job.time.year == date.today().year and bohne.job.time.month < 4)) and bohne.job.time < datetime.datetime.now():
                     userbohnen.append(bohne)
             else:
                 if (bohne.job.time.year == date.today().year and bohne.job.time.month > 3) and bohne.job.time < datetime.datetime.now():
@@ -257,12 +257,12 @@ def my_pastjobs(request):
     """
     loco = request.user.loco
 
-    allebohnen = Boehnli.objects.filter(loco=loco)
-    past_bohnen = []
+    past_bohnen = Boehnli.objects.filter(loco=loco, job__time__lt=datetime.datetime.now()).order_by('job__time')
+    #past_bohnen = []
 
-    for bohne in allebohnen:
-        if bohne.job.time < datetime.datetime.now():
-            past_bohnen.append(bohne)
+    #for bohne in allebohnen:
+    #    if bohne.job.time < datetime.datetime.now():
+    #        past_bohnen.append(bohne)
 
     renderdict = get_menu_dict(request)
     renderdict.update({
