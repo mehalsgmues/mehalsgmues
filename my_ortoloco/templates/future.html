@@ -38,6 +38,22 @@
         </tr>
         {% endfor %}
     </table>
+    
+    <table class="future">
+        <tr style="border: 1px solid black">
+            <th>Abo Mitglieder</th>
+            <th style="padding-right: 4px">Bisher</th>
+            <th style="padding-right: 4px">Neu</th>
+        </tr>
+    {% for changed_abo in changed_abos %}
+        <tr style="border: 1px solid black">
+            <td>{{ changed_abo.members }}</td>
+            <td>{{ changed_abo.size }}</td>
+            <td>{{ changed_abo.future_size }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    
     <br/><br/>
     ACHTUNG! Dies darf nur am 1.1. und am 1.7. des Jahres gedrückt werden!
     <a href="/my/wechsel/zusatzabos" class="btn btn-success" >Switch to future extra abos</a><br/><br/>

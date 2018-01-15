@@ -30,7 +30,7 @@ from static_ortoloco.models import Politoloco
 from decorators import primary_loco_of_abo
 
 import json
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
 
 def password_generator(size=8, chars=string.ascii_uppercase + string.digits): return ''.join(random.choice(chars) for x in range(size))
 
@@ -1230,6 +1230,11 @@ def my_future(request):
 
     month = int(time.strftime("%m"))
     day = int(time.strftime("%d"))
+    
+    changed_abos = []
+    for changed_abo in Abo.objects.exclude( size=F('future_size') ):
+        changed_abos.append({ 'members': changed_abo.bezieher(), 'size': changed_abo.size, 'future_size': changed_abo.future_size })
+    
 
     renderdict.update({
         'changed': request.GET.get("changed"),
@@ -1240,7 +1245,8 @@ def my_future(request):
         'house_abos_future': house_abos_future,
         'small_abos_future': small_abos_future,
         'extras': extra_abos.itervalues(),
-        'abo_change_enabled': month is 12 or (month is 1 and day <= 6)
+        'abo_change_enabled': month is 12 or (month is 1 and day <= 6),
+        'changed_abos' : changed_abos
     })
     return render(request, 'future.html', renderdict)
 
