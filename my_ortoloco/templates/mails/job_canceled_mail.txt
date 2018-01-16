@@ -1,7 +1,8 @@
 {% extends "mails/email.txt" %}
 {% block content %}
+{{ subject }}
 
-Dein ortoloco-Arbeitseinsatz "{{ job.typ.displayed_name }}"  um {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }} wurde leider Abgesagt.
+Dein Arbeitseinsatz "{{ job.typ.displayed_name }}"  um {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }} wurde leider Abgesagt.
 
 Details:
 
@@ -9,8 +10,7 @@ Job:             {{ job.typ.description }}
 Zeit:            {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
 Ort:             {{ job.typ.location }}
 
-Es tut uns leid und hoffen dich bei einem anderen Einsatz wieder zu sehen!
+Es tut uns leid und wir hoffen dich bei einem anderen Einsatz wieder zu sehen!
 
-Herzlich grüsst,
-dein ortoloco-Team
+{% include "mails/signature.txt" %}
 {% endblock %}

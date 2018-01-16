@@ -62,7 +62,7 @@ class FilterGen(Filter):
         
 
 
-FilterGen(lambda depot: u"Depot {0}".format(depot.name),
+FilterGen(lambda depot: "Depot {0}".format(depot.name),
           lambda depot, loco: loco.abo.depot==depot,
           Depot.objects.all)
 
@@ -79,10 +79,10 @@ Filter("grosses Abo", lambda loco: loco.abo.big_abos())
 Filter("Hausabo", lambda loco: loco.abo.house_abos())
 
 
-FilterGen(lambda za: u"Zusatzabo {0}".format(za.name),
+FilterGen(lambda za: "Zusatzabo {0}".format(za.name),
           lambda za, loco: za.abo_set.filter(id=loco.abo.id),
           ExtraAboType.objects.all)
 
-FilterGen(lambda bereich: u"Taetigkeitsbereich {0}".format(bereich.name),
+FilterGen(lambda bereich: "Taetigkeitsbereich {0}".format(bereich.name),
           lambda bereich, loco: bereich.users.filter(id=loco.user.id),
           Taetigkeitsbereich.objects.all)

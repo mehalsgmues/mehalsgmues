@@ -17,7 +17,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 class AuthenticateWithEmail(object):
     def authenticate(self, username=None, password=None):
-        from models import Loco
+        from .models import Loco
 
         try:
             user = Loco.objects.get(**{'email': username}).user
@@ -61,17 +61,17 @@ weekdays = dict(weekday_choices)
 
 
 def get_current_jobs():
-    from models import Job
+    from .models import Job
 
     return Job.objects.filter(time__gte=datetime.datetime.now()).order_by("time")
 
 def get_current_one_time_jobs():
-    from models import OneTimeJob
+    from .models import OneTimeJob
 
     return OneTimeJob.objects.filter(time__gte=datetime.datetime.now()).order_by("time")
 
 def get_current_recuring_jobs():
-    from models import RecuringJob
+    from .models import RecuringJob
 
     return RecuringJob.objects.filter(time__gte=datetime.datetime.now()).order_by("time")
 
@@ -99,7 +99,7 @@ def make_username(firstname, lastname, email):
 
 @staff_member_required
 def get_emails_by_filter(request, global_filter, column_filter=None):
-    from models import Loco
+    from .models import Loco
     from django.db.models import Q
     """
     Get filtered list of member email adresses

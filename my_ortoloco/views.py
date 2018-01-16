@@ -2,7 +2,7 @@
 
 from datetime import date
 from collections import defaultdict
-from StringIO import StringIO
+from io import StringIO
 import string
 import random
 import re
@@ -27,7 +27,7 @@ from static_ortoloco.models import StaticContent
 import hashlib
 from static_ortoloco.models import Politoloco
 
-from decorators import primary_loco_of_abo
+from .decorators import primary_loco_of_abo
 
 import json
 from django.db.models import Q, Count
@@ -50,7 +50,7 @@ def get_menu_dict(request):
                     userbohnen.append(bohne)
 
         # amount of beans shown => round up if needed never down
-        bohnenrange = range(0, max(userbohnen.__len__(), int(math.ceil(loco.abo.size * 6 / loco.abo.locos.count()))))
+        bohnenrange = list(range(0, max(userbohnen.__len__(), int(math.ceil(loco.abo.size * 6 / loco.abo.locos.count())))))
 
         for bohne in Boehnli.objects.all().filter(loco=loco).order_by("job__time"):
             if bohne.job.time > datetime.datetime.now():
@@ -82,7 +82,7 @@ def my_home(request):
     """
     announcement = ""
     if StaticContent.objects.all().filter(name='my.ortoloco').__len__() > 0:
-        announcement = u"<h3>Ankündigungen:</h3>" + StaticContent.objects.all().filter(name='my.ortoloco')[0].content + "</br>"
+        announcement = "<h3>Ankündigungen:</h3>" + StaticContent.objects.all().filter(name='my.ortoloco')[0].content + "</br>"
 
     next_jobs = set(get_current_jobs()[:7])
     pinned_jobs = set(Job.objects.filter(pinned=True, time__gte=datetime.datetime.now()))
@@ -133,11 +133,11 @@ def my_job(request, job_id):
             else:
                 loco_info["url"] = ""
                 loco_info["reachable"] = False;
-    print participants_new_dict
+    print(participants_new_dict)
 
     participants_summary = []
     emails = []
-    for loco_name, loco_dict in participants_new_dict.iteritems():
+    for loco_name, loco_dict in participants_new_dict.items():
         # print loco_name, loco_dict
         count = loco_dict.get("count")
         msg = loco_dict.get("msg")
@@ -169,8 +169,8 @@ def my_job(request, job_id):
     #                                     + ' (mit ' + str(number_of_companions - 1)
     #                                     + ' weiteren Personen)')
 
-    slotrange = range(0, job.slots)
-    allowed_additional_participants = range(1, job.slots - number_of_participants + 1)
+    slotrange = list(range(0, job.slots))
+    allowed_additional_participants = list(range(1, job.slots - number_of_participants + 1))
     job_fully_booked = len(allowed_additional_participants) == 0
     job_is_in_past = job.end_time() < datetime.datetime.now()
     job_is_running = job.start_time() < datetime.datetime.now()
@@ -455,7 +455,7 @@ def my_team(request, bereich_id):
     job_types = JobType.objects.all().filter(bereich=bereich_id)
 
     otjobs = get_current_one_time_jobs().filter(bereich=bereich_id)
-    rjobs = get_current_recuring_jobs().filter(typ=job_types)
+    rjobs = get_current_recuring_jobs().filter(typ__in=job_types)
     jobs = list(rjobs)
 
     if len(otjobs) > 0:
@@ -1239,7 +1239,7 @@ def my_future(request):
         'big_abos_future': big_abos_future,
         'house_abos_future': house_abos_future,
         'small_abos_future': small_abos_future,
-        'extras': extra_abos.itervalues(),
+        'extras': iter(extra_abos.values()),
         'abo_change_enabled': month is 12 or (month is 1 and day <= 6)
     })
     return render(request, 'future.html', renderdict)
@@ -1292,14 +1292,14 @@ def my_excel_export(request):
     workbook = xlsxwriter.Workbook(output)
     worksheet_s = workbook.add_worksheet("Locos")
 
-    worksheet_s.write_string(0, 0, unicode("Name", "utf-8"))
-    worksheet_s.write_string(0, 1, unicode("Boehnlis", "utf-8"))
-    worksheet_s.write_string(0, 2, unicode("Boehnlis Kernbereich", "utf-8"))
-    worksheet_s.write_string(0, 3, unicode("Taetigkeitsbereiche", "utf-8"))
-    worksheet_s.write_string(0, 4, unicode("Depot", "utf-8"))
-    worksheet_s.write_string(0, 5, unicode("Email", "utf-8"))
-    worksheet_s.write_string(0, 6, unicode("Telefon", "utf-8"))
-    worksheet_s.write_string(0, 7, unicode("Mobile", "utf-8"))
+    worksheet_s.write_string(0, 0, str("Name", "utf-8"))
+    worksheet_s.write_string(0, 1, str("Boehnlis", "utf-8"))
+    worksheet_s.write_string(0, 2, str("Boehnlis Kernbereich", "utf-8"))
+    worksheet_s.write_string(0, 3, str("Taetigkeitsbereiche", "utf-8"))
+    worksheet_s.write_string(0, 4, str("Depot", "utf-8"))
+    worksheet_s.write_string(0, 5, str("Email", "utf-8"))
+    worksheet_s.write_string(0, 6, str("Telefon", "utf-8"))
+    worksheet_s.write_string(0, 7, str("Mobile", "utf-8"))
 
     locos = Loco.objects.all()
     boehnlis = current_year_boehnlis_per_loco()
@@ -1312,9 +1312,9 @@ def my_excel_export(request):
         for bereich in loco.areas.all():
             loco.bereiche = loco.bereiche + bereich.name +" "
         if loco.bereiche == "":
-            loco.bereiche = unicode("-Kein Tätigkeitsbereich-", "utf-8")
+            loco.bereiche = str("-Kein Tätigkeitsbereich-", "utf-8")
 
-        loco.depot_name = unicode("Kein Depot definiert", "utf-8")
+        loco.depot_name = str("Kein Depot definiert", "utf-8")
         if loco.abo is not None:
             loco.depot_name=loco.abo.depot.name
         looco_full_name = loco.first_name + " " + loco.last_name
@@ -1379,7 +1379,7 @@ def test_filters(request):
     for name in Filter.get_names():
         res.append("<br><br>%s:" % name)
         tmp = Filter.execute([name], "OR")
-        data = Filter.format_data(tmp, unicode)
+        data = Filter.format_data(tmp, str)
         res.extend(data)
     return HttpResponse("<br>".join(res))
 

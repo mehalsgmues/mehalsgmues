@@ -5,7 +5,7 @@ from django.contrib import admin, messages
 from django import forms
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.conf.urls import patterns
+#from django.conf.urls import patterns
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
@@ -17,6 +17,7 @@ from my_ortoloco import admin_helpers
 # current abo as their abo
 class AboAdminForm(forms.ModelForm):
     class Meta:
+        fields = []
         model = Abo
 
     abo_locos = forms.ModelMultipleChoiceField(queryset=Loco.objects.all(), required=False,
@@ -175,7 +176,7 @@ class JobAdmin(admin.ModelAdmin):
 
     def mass_copy_job(self, request, queryset):
         if queryset.count() != 1:
-            self.message_user(request, u"Genau 1 Job auswählen!", level=messages.ERROR)
+            self.message_user(request, "Genau 1 Job auswählen!", level=messages.ERROR)
             return HttpResponseRedirect("")
 
         inst, = queryset.all()
@@ -198,14 +199,6 @@ class JobAdmin(admin.ModelAdmin):
         return super(JobAdmin, self).get_form(request, obj, **kwds)
 
 
-    def get_urls(self):
-        urls = super(JobAdmin, self).get_urls()
-        my_urls = patterns("",
-                           (r"^copy_job/(?P<jobid>.*?)/$", self.admin_site.admin_view(self.copy_job_view))
-        )
-        return my_urls + urls
-
-
     def copy_job_view(self, request, jobid):
         # HUGE HACK: modify admin properties just for this view
         tmp_readonly = self.readonly_fields
@@ -225,6 +218,7 @@ class JobAdmin(admin.ModelAdmin):
             return ""
         return admin.ModelAdmin.construct_change_message(self, request, form, formsets)
 
+"""
 class OneTimeJobAdmin(admin.ModelAdmin):
     list_display = ["__unicode__", "typ", "time", "slots", "freie_plaetze"]
     actions = ["transform_job"]
@@ -252,6 +246,7 @@ class OneTimeJobAdmin(admin.ModelAdmin):
             t.save()
 
     transform_job.short_description = "EinzelJobs in Jobart konvertieren"
+"""
 
 class JobTypeAdmin(admin.ModelAdmin):
     list_display = ["__unicode__"]
@@ -266,7 +261,7 @@ class JobTypeAdmin(admin.ModelAdmin):
                 helpers.attribute_copy(rj,oj)
                 oj.name = oj.name + str(i)
                 i = i+1
-                print oj.__dict__
+                print(oj.__dict__)
                 oj.save()    
                 for b in Boehnli.objects.filter(job_id=rj.id):
                     b.job = oj
@@ -278,6 +273,7 @@ class JobTypeAdmin(admin.ModelAdmin):
     
 class AboAdmin(admin.ModelAdmin):
     form = AboAdminForm
+    
     list_display = ["__unicode__", "bezieher", "primary_loco_nullsave", "depot", "active"]
     #filter_horizontal = ["users"]
     search_fields = ["locos__user__username", "locos__first_name", "locos__last_name", "depot__name"]
@@ -316,6 +312,7 @@ class BoehnliAdmin(admin.ModelAdmin):
 class LocoAdminForm(forms.ModelForm):
     class Meta:
         model = Loco
+        fields = []
 
 
     def __init__(self, *a, **k):
@@ -346,7 +343,7 @@ class LocoAdmin(admin.ModelAdmin):
 
     def impersonate_job(self, request, queryset):
         if queryset.count() != 1:
-            self.message_user(request, u"Genau 1 Loco auswählen!", level=messages.ERROR)
+            self.message_user(request, "Genau 1 Loco auswählen!", level=messages.ERROR)
             return HttpResponseRedirect("")
         inst, = queryset.all()
         return HttpResponseRedirect("/impersonate/%s/" % inst.user.id)
@@ -370,4 +367,4 @@ admin.site.register(Anteilschein, AnteilscheinAdmin)
 admin.site.register(Boehnli, BoehnliAdmin)
 admin.site.register(JobType, JobTypeAdmin)
 admin.site.register(RecuringJob, JobAdmin)
-admin.site.register(OneTimeJob, OneTimeJobAdmin)
+# admin.site.register(OneTimeJob, OneTimeJobAdmin)

@@ -1,16 +1,19 @@
 {% extends "mails/email.html" %}
 {% block content %}
-    Wir freuen uns, dich bei ortoloco begrüssen zu dürfen. Soeben hat dich '{{ name }}' zu ihrem/seinem Gemüsebo hinzugefügt und für dich {{ anteilsscheine }} Anteilschein(e) erworben. Wenn du damit einverstanden bist, ortoloco-GenossenschafterIn zu werden und <a target="_blank" href="{{ serverurl }}/static/others/131129_Statuten_ortoloco.pdf">die Statuten</a> und <a target="_blank" href="{{ serverurl }}/static/others/131129_Betriebsreglement_ortoloco.pdf">das Betriebsreglement</a> gelesen hast, dann klicke bitte <a href="{{ serverurl }}/my/bestaetigung/{{ hash }}">hier zur Bestätigung</a>.
+    <font color="#003300"><big><b>{{ subject }}</b></big></font><br>
+    <br>
+    <font color="#663300">
+        Wir freuen uns, dich bei meh als gmües begrüssen zu dürfen. Soeben hat dich '{{ name }}' zu ihrem/seinem Gemüsebo hinzugefügt und für dich {{ anteilsscheine }} Anteilschein(e) erworben. Wenn du damit einverstanden bist, meh-als-gmües-GenossenschafterIn zu werden und <a target="_blank" href="http://mehalsgmues.ch/content/3-ueber-uns/4-dokumente/statuten_jan2015.pdf">die Statuten</a> und <a target="_blank" href="http://mehalsgmues.ch/content/3-ueber-uns/4-dokumente/betriebsreglement_mai2016.pdf">das Betriebsreglement</a> gelesen hast, dann klicke bitte <a href="{{ serverurl }}/my/bestaetigung/{{ hash }}">hier zur Bestätigung</a>.
 
-    <br/><br/>
-    Unter <a href="http://my.ortoloco.ch">my.ortoloco.ch</a> kannst du dich ab sofort für Arbeitseinsätze anmelden und vieles mehr.
-    <br/><br/>
-    Email: {{ username }}<br/>
-    Passwort: {{ password }} (bitte setze dir <a href="{{ serverurl }}/my/passwort">hier</a> gleich ein neues Passwort)
-    <br/><br/>
-    Weitere Infos wirst du bald erhalten. Bei Fragen oder Unklarheiten einfach melden: <br/>
-    <a href="mailto:info@ortoloco.ch">info@ortoloco.ch</a>
-    <br/><br/>
-    Herzlich grüsst,<br/>
-    die ortoloco-Betriebsgruppe
+        <br/><br/>
+        Unter <a href="http://my.mehalsgmues.ch">my.mehalsgmues.ch</a> kannst du dich ab sofort für Arbeitseinsätze anmelden und vieles mehr.
+        <br/><br/>
+        Email: {{ username }}<br/>
+        Passwort: {{ password }} (bitte setze dir <a href="{{ serverurl }}/my/passwort">hier</a> gleich ein neues Passwort)
+        <br/><br/>
+        Weitere Infos wirst du bald erhalten. Bei Fragen oder Unklarheiten einfach melden: <br/>
+        <a href="mailto:info@mehalsgmues.ch">info@mehalsgmues.ch</a>
+        <br/><br/>
+        {% include "mails/signature.html" %}
+    </font>
 {% endblock %}

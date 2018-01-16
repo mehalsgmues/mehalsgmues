@@ -1,8 +1,8 @@
 from django_cron import cronScheduler, Job
-import models
+from . import models
 from django.utils import timezone
 import datetime
-from mailer import send_job_reminder
+from .mailer import send_job_reminder
 
 
 class Send_Job_Reminders(Job):
@@ -18,10 +18,10 @@ class Send_Job_Reminders(Job):
                 if bohne.loco is not None:
                     participants.append(str(bohne.loco))
                     emails.append(bohne.loco.email)
-            send_job_reminder(emails, job, ", ".join(participants), "http://my.ortoloco.ch")
+            send_job_reminder(emails, job, ", ".join(participants), "http://my.mehalsgmues.ch")
             job.reminder_sent = True
             job.save()
-            print("reminder sent for job " + str(job.id))
+            print(("reminder sent for job " + str(job.id)))
 
 
 

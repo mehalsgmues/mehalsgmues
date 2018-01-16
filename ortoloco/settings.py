@@ -1,12 +1,15 @@
 # Django settings for ortoloco project.
 import os
-import dj_database_url
+#import dj_database_url
 
 DEBUG = os.environ.get("ORTOLOCO_DEBUG", False)
+PROFILE_LOG_BASE = '/tmp/logs/'
+
+#DEBUG=True #dg: verhindert, dass versucht wird eine E-mail zu senden, was scheitern wuerde.
 
 TEMPLATE_DEBUG = DEBUG
 
-WHITELIST_EMAILS = ["mklarmann@gmail.com"]
+WHITELIST_EMAILS = ["d.glenck@ihdg.ch"]
 
 def whitelist_email_from_env(var_env_name):
     email = os.environ.get(var_env_name)
@@ -33,25 +36,27 @@ AUTHENTICATION_BACKENDS = (
 MANAGERS = ADMINS
 
 
-DATABASES = {}
-DATABASES['default'] =  dj_database_url.config(default='DATABASE_URL')
-DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+#DATABASES = {}
+#DATABASES['default'] =  dj_database_url.config(default='DATABASE_URL')
+#DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+#DATABASES['default']['ENGINE'] = os.environ.get('ORTOLOCO_DATABASE_ENGINE')
+#DATABASES['default']['NAME'] = os.environ.get('ORTOLOCO_DATABASE_NAME')
 
 
-DATABASES = {'default': dj_database_url.config(default='DATABASE_URL')}
+#DATABASES = {'default': dj_database_url.config(default='DATABASE_URL')}
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.environ.get('ORTOLOCO_DATABASE_ENGINE', 'django.db.backends.postgresql_psycopg2'), # 'django.db.backends.postgresql_psycopg2', #'django.db.backends.sqlite3', # Add , 'mysql', 'sqlite3' or 'oracle'.
-#         'NAME': os.environ.get('ORTOLOCO_DATABASE_NAME','dtmcgv4jhtaqd'), #''ortoloco', # 'db.sqlite',                      # Or path to database file if using sqlite3.
-#         'USER': os.environ.get('ORTOLOCO_DATABASE_USER','nhwoxfurjjuasx'), #''ortoloco', # The following settings are not used with sqlite3:
-#         'PASSWORD': os.environ.get('ORTOLOCO_DATABASE_PASSWORD','Lz-PnvD3v_vWDM-ZtZmqOr0Kqr'), #''ortoloco',
-#         'HOST': os.environ.get('ORTOLOCO_DATABASE_HOST','ec2-54-83-58-191.compute-1.amazonaws.com'), #'localhost', # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-#         'PORT': os.environ.get('ORTOLOCO_DATABASE_PORT', '5432'), #''', # Set to empty string for default.
-#         'SSLMODE': os.environ.get('ORTOLOCO_DATABASE_SSLMODE', 'require'), #''', # Set to empty string for default.
-#     }
-# }
+DATABASES = {
+     'default': {
+         'ENGINE': os.environ.get('ORTOLOCO_DATABASE_ENGINE', 'django.db.backends.postgresql_psycopg2'), # 'django.db.backends.postgresql_psycopg2', 'django.db.backends.sqlite3', # Add , 'mysql', 'sqlite3' or 'oracle'.
+         'NAME': os.environ.get('ORTOLOCO_DATABASE_NAME','test'), #''ortoloco', # 'db.sqlite',                      # Or path to database file if using sqlite3.
+         'USER': os.environ.get('ORTOLOCO_DATABASE_USER','dave'), #''ortoloco', # The following settings are not used with sqlite3:
+         'PASSWORD': os.environ.get('ORTOLOCO_DATABASE_PASSWORD',''), #''ortoloco',
+         'HOST': os.environ.get('ORTOLOCO_DATABASE_HOST','localhost'), #'localhost', # Empty for localhost through domain sockets or 127.0.0.1' for localhost through TCP.
+         'PORT': os.environ.get('ORTOLOCO_DATABASE_PORT', '5432'), #''', # Set to empty string for default.
+         'SSLMODE': os.environ.get('ORTOLOCO_DATABASE_SSLMODE', 'require'), #''', # Set to empty string for default.
+     }
+}
 
 
 EMAIL_HOST = os.environ.get('ORTOLOCO_EMAIL_HOST')
@@ -192,23 +197,31 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'my_ortoloco',
-    'static_ortoloco',
-    'photologue',
-    'south',
-    'django_cron',
+    #'django.contrib.auth',
+    #'django.contrib.contenttypes',
+    #'django.contrib.sessions',
+    #'django.contrib.sites',
+    #'django.contrib.messages',
+    #'django.contrib.staticfiles',
+    ## Uncomment the next line to enable the admin:
+    #'django.contrib.admin',
+    ## Uncomment the next line to enable admin documentation:
+    ## 'django.contrib.admindocs',
+    #'tinymce',
+    #'impersonate',
+    #'storages',
+    ##'mama_cas',
+    
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    'tinymce',
+    'juntagrico',
     'impersonate',
-    'storages'
+    #'demo',
 )
 
 # logging config - copied from here: http://stackoverflow.com/questions/18920428/django-logging-on-heroku

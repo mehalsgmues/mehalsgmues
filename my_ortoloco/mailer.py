@@ -21,7 +21,7 @@ def send_mail(subject, message, from_email, to_emails, sendername):
                     sent = True
                     okmails.append(email)
             if not sent:
-                print "Mail not sent to " + ", " + email + ", not in whitelist"
+                print("Mail not sent to " + ", " + email + ", not in whitelist")
 
     if len(okmails) > 0:
         # only SERVER_EMAIL is allowed as sender. Workaround:
@@ -43,7 +43,7 @@ def send_mail(subject, message, from_email, to_emails, sendername):
             email.to = [amail]
             email.send()
         connection.close()
-        print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
+        print("Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else ""))
 
     return None
 
@@ -60,7 +60,7 @@ def send_mail_multi(email_multi_message):
                     sent = True
                     okmails.append(email)
             if not sent:
-                print "Mail not sent to " + email + ", not in whitelist"
+                print("Mail not sent to " + email + ", not in whitelist")
 
     if len(okmails) > 0:
         # only SERVER_EMAIL is allowed as sender. Workaround:
@@ -70,7 +70,7 @@ def send_mail_multi(email_multi_message):
         email_multi_message.to = []
         email_multi_message.bcc = okmails
         email_multi_message.send()
-        print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
+        print("Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else ""))
     return None
 
 

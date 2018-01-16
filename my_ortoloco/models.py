@@ -12,8 +12,8 @@ from polymorphic.models import PolymorphicModel
 
 
 
-import model_audit
-import helpers
+import my_ortoloco.model_audit as model_audit
+import my_ortoloco.helpers as helpers
 
 from my_ortoloco.mailer import *
 
@@ -36,7 +36,7 @@ class Depot(models.Model):
     description = models.TextField("Beschreibung", max_length=1000, default="")
 
     def __unicode__(self):
-        return u"%s %s" % (self.id, self.name)
+        return "%s %s" % (self.id, self.name)
 
 
     def active_abos(self):
@@ -137,7 +137,7 @@ class ExtraAboType(models.Model):
     description = models.TextField("Beschreibung", max_length=1000)
 
     def __unicode__(self):
-        return u"%s %s" % (self.id, self.name)
+        return "%s %s" % (self.id, self.name)
 
     class Meta:
         verbose_name = "Zusatz-Abo"
@@ -161,22 +161,22 @@ class Abo(models.Model):
     def __unicode__(self):
         namelist = ["1 Einheit" if self.size == 1 else "%d Einheiten" % self.size]
         namelist.extend(extra.name for extra in self.extra_abos.all())
-        return u"Abo (%s) %s" % (" + ".join(namelist), self.id)
+        return "Abo (%s) %s" % (" + ".join(namelist), self.id)
 
     def bezieher(self):
         locos = self.locos.all()
-        return ", ".join(unicode(loco) for loco in locos)
+        return ", ".join(str(loco) for loco in locos)
 
     def andere_bezieher(self):
         locos = self.bezieher_locos().exclude(email=self.primary_loco.email)
-        return ", ".join(unicode(loco) for loco in locos)
+        return ", ".join(str(loco) for loco in locos)
 
     def bezieher_locos(self):
         return self.locos.all()
 
     def primary_loco_nullsave(self):
         loco = self.primary_loco
-        return unicode(loco) if loco is not None else ""
+        return str(loco) if loco is not None else ""
     primary_loco_nullsave.short_description = "Hauptmitglied"
 
     def small_abos(self):
@@ -301,7 +301,7 @@ class Loco(models.Model):
         verbose_name_plural = "Mitglieder"
 
     def get_name(self):
-        return u"%s %s" % (self.first_name, self.last_name)
+        return "%s %s" % (self.first_name, self.last_name)
 
     def get_phone(self):
         if self.mobile_phone != "":
@@ -315,7 +315,7 @@ class Anteilschein(models.Model):
     canceled = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return u"Anteilschein #%s" % (self.id)
+        return "Anteilschein #%s" % (self.id)
 
     class Meta:
         verbose_name = "Anteilschein"
@@ -331,7 +331,7 @@ class Taetigkeitsbereich(models.Model):
     locos = models.ManyToManyField(Loco, related_name="areas", blank=True, null=True)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return '%s' % self.name
 
     class Meta:
         verbose_name = 'Tätigkeitsbereich'
@@ -339,7 +339,7 @@ class Taetigkeitsbereich(models.Model):
         permissions = (('is_area_admin', 'Benutzer ist TätigkeitsbereichskoordinatorIn'),)
 
 
-class AbstractJobType(PolymorphicModel):
+class AbstractJobType(models.Model):
     """
     Abstract type of job.
     """
@@ -351,7 +351,7 @@ class AbstractJobType(PolymorphicModel):
     location = models.CharField("Ort", max_length=100, default="")
 
     def __unicode__(self):
-        return u'%s - %s' % (self.bereich, self.get_name())
+        return '%s - %s' % (self.bereich, self.get_name())
 
     def get_name(self):
         if self.displayed_name is not None:
@@ -361,6 +361,7 @@ class AbstractJobType(PolymorphicModel):
     class Meta:
         verbose_name = 'AbstractJobart'
         verbose_name_plural = 'AbstractJobarten'
+        #abstract = True
         
 class JobType(AbstractJobType):
     """
@@ -372,7 +373,7 @@ class JobType(AbstractJobType):
         verbose_name_plural = 'Jobarten'
 
 
-class Job(PolymorphicModel):
+class Job(models.Model):
     slots = models.PositiveIntegerField("Plaetze")
     time = models.DateTimeField()
     pinned = models.BooleanField(default=False)
@@ -385,7 +386,7 @@ class Job(PolymorphicModel):
         raise NotImplementedError
     
     def __unicode__(self):
-        return u'Job #%s' % (self.id)
+        return 'Job #%s' % (self.id)
 
 
     def wochentag(self):
@@ -418,7 +419,7 @@ class Job(PolymorphicModel):
         
     def clean(self):
         if(self.old_canceled != self.canceled and self.old_canceled == True):
-            raise ValidationError(u'Abgesagte jobs koennen nicht wieder aktiviert werden', code='invalid')
+            raise ValidationError('Abgesagte jobs koennen nicht wieder aktiviert werden', code='invalid')
     
     
     @classmethod
@@ -451,11 +452,12 @@ class RecuringJob(Job):
         verbose_name = 'Job'
         verbose_name_plural = 'Jobs'
 
-class OneTimeJob(AbstractJobType, Job):
+class OneTimeJob(AbstractJobType): #, Job
     """
     One time job. Do not add Field here do it in the Parent class
     """
-   
+    # dgl: try fix.
+    job_ptr_id = models.PositiveIntegerField("Job")
 
     @property
     def typ(self):
@@ -473,7 +475,7 @@ class Boehnli(models.Model):
     loco = models.ForeignKey(Loco, on_delete=models.PROTECT, verbose_name="Mitglied")
 
     def __unicode__(self):
-        return u'Boehnli #%s' % self.id
+        return 'Boehnli #%s' % self.id
 
     def zeit(self):
         return self.job.time
