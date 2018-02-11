@@ -1,6 +1,6 @@
 # Django settings for ortoloco project.
 import os
-#import dj_database_url
+import dj_database_url
 
 DEBUG = os.environ.get("ORTOLOCO_DEBUG", False)
 PROFILE_LOG_BASE = '/tmp/logs/'
