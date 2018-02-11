@@ -43,9 +43,9 @@ MANAGERS = ADMINS
 #DATABASES['default']['NAME'] = os.environ.get('ORTOLOCO_DATABASE_NAME')
 
 
-#DATABASES = {'default': dj_database_url.config(default='DATABASE_URL')}
+DATABASES = {'default': dj_database_url.config(default='DATABASE_URL')}
 
-
+"""
 DATABASES = {
      'default': {
          'ENGINE': os.environ.get('ORTOLOCO_DATABASE_ENGINE', 'django.db.backends.postgresql_psycopg2'), # 'django.db.backends.postgresql_psycopg2', 'django.db.backends.sqlite3', # Add , 'mysql', 'sqlite3' or 'oracle'.
@@ -57,6 +57,7 @@ DATABASES = {
          'SSLMODE': os.environ.get('ORTOLOCO_DATABASE_SSLMODE', 'require'), #''', # Set to empty string for default.
      }
 }
+"""
 
 
 EMAIL_HOST = os.environ.get('ORTOLOCO_EMAIL_HOST')
